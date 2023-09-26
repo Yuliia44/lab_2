@@ -1,0 +1,133 @@
+using System;
+using System.IO;
+
+class Ar
+{
+    private int n;
+    private int[] a;
+    private int k;
+
+    public int K
+    {
+        get { return k; }
+    }
+
+    public int N
+    {
+        get { return n; }
+    }
+
+    public Ar(int n)
+    {
+        this.n = n;
+        a = new int[n];
+        Random rand = new Random();
+
+        for (int i = 0; i < n; i++)
+        {
+            a[i] = rand.Next(-99, 100); // Генеруємо випадкові числа від -99 до 99
+            if (a[i] < 0)
+                k++;
+        }
+    }
+
+    public Ar(string fileName)
+    {
+        string[] lines = File.ReadAllLines(fileName);
+        n = lines.Length;
+        a = new int[n];
+
+        for (int i = 0; i < n; i++)
+        {
+            if (int.TryParse(lines[i], out int num))
+            {
+                a[i] = num;
+                if (a[i] < 0)
+                    k++;
+            }
+        }
+    }
+
+    public void Print()
+    {
+        foreach (int num in a)
+        {
+            Console.Write(num + " ");
+        }
+        Console.WriteLine();
+    }
+
+    public int P()
+    {
+        for (int i = n - 1; i >= 0; i--)
+        {
+            if (a[i] < 0)
+                return i;
+        }
+        return -1;
+    }
+
+    public int Sum(int i1, int i2)
+    {
+        int sum = 0;
+        for (int i = i1; i <= i2; i++)
+        {
+            sum += a[i];
+        }
+        return sum;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.OutputEncoding = System.Text.Encoding.UTF8; // Відображення "і" та "ї" на консолі
+        try
+        {
+            Console.Write("Конструктор 1/2: ");
+            int constructorChoice = int.Parse(Console.ReadLine());
+
+            Ar ar;
+
+            if (constructorChoice == 1)
+            {
+                Console.Write("Кількість елементів масиву: ");
+                int n = int.Parse(Console.ReadLine());
+                ar = new Ar(n);
+            }
+            else if (constructorChoice == 2)
+            {
+                Console.Write("Назву файлу з числами: ");
+                string fileName = Console.ReadLine();
+                ar = new Ar(fileName);
+            }
+            else
+            {
+                Console.WriteLine("Невірний вибір конструктора.");
+                return;
+            }
+
+            Console.WriteLine("\nМасив:");
+            ar.Print();
+
+            Console.WriteLine($"Кількість негативних елементів: {ar.K}");
+
+            int lastIndex = ar.P();
+            if (lastIndex != -1)
+            {
+                Console.WriteLine($"Індекс останнього негативного елементу: {lastIndex}");
+                int sum = ar.Sum(0, lastIndex);
+                Console.WriteLine($"Сума всіх елементів масиву лівіше знайденого: {sum}");
+            }
+            else
+            {
+                Console.WriteLine("Негативних елементів немає.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Помилка: {ex.Message}");
+        }
+    }
+}
